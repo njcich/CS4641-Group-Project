@@ -20,7 +20,7 @@ Syntax highlighted code block
 - Bulleted
 - List
 
-$a\in b$
+$a \in b$
 
 1. Numbered
 2. List
