@@ -1,5 +1,5 @@
 #### CS 4641 Group 2 Project helper functions
-#### contributor: Zack Vogel
+#### contributor: Zack Vogel (dvogel3
 
 import pandas as pd
 
