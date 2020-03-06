@@ -15,8 +15,8 @@ def main():
 
 def kmeans(data, col_name):
     loss = np.zeros(MAX_K)
-    for K in range(MAX_K - 1):
-        kmeans = KMeans(n_clusters=(K + 1), random_state=0).fit(data)
+    for K in range(MAX_K - 2):
+        kmeans = KMeans(n_clusters=(K + 2), random_state=0).fit(data)
         loss[K] = kmeans.inertia_
     plt.plot(loss)
     plt.xlabel('Number of Clusters')
