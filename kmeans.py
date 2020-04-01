@@ -13,14 +13,10 @@ MAX_K = 10
 ## for different values of K in visualize_kmeans() and then using elbow method to determine ideal K value
 IDEAL_K_1D = np.array([3, 3, 3, 3, 4, 2, 2, 2, 3, 2, 3, 3, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 3, 3, 3, 3, 3, 2, 3, 3, 3, 3, 3, 2, 3, 4, 4, 2])
 
-## Boolean variables to determine what code should run; if `VISUALIZE_ELBOW` is True, the loss values of each dataset will be
-## plotted.  If `RUN_IDEAL_KMEANS` is True, the data will be assigned clusters using the K-Means algorithm with the number of
-## clusters taken from `IDEAL_K_1D`. If VISUALIZE_IDEAL_K is True, these clusters will be plotted.
-VISUALIZE_ELBOW = False
-RUN_IDEAL_KMEANS = True
-VISUALIZE_IDEAL_K = False
-
-def main():
+## Parameters are boolean variables to determine what code should run; if `visualize_elbow` is True, the loss values of each
+## dataset will be plotted. Otherwise, the data will be assigned clusters using the K-Means algorithm with the number of
+## clusters taken from `IDEAL_K_1D`. If `visualize_ideal_k` is True, these clusters will be plotted.
+def run_1D_kmeans(visualize_elbow=False, visualize_ideal_k=False):
     # Loads data from world_indices.csv
     df = load_csv('world_indices.csv')
     data = df.to_numpy()
@@ -28,13 +24,13 @@ def main():
     # Scales all data to be between 0 and 1
     data[:, 2:] = (data[:, 2:] - np.amin(data[:, 2:], axis=0)[None, :]) / (np.amax(data[:, 2:], axis=0) - np.amin(data[:, 2:], axis=0))[None, :]
     
-    if VISUALIZE_ELBOW:
+    if visualize_elbow:
         for x in range(2, np.shape(data)[1]):
             visualize_kmeans(data[:, x].reshape(-1, 1), df.columns[x])
-    elif RUN_IDEAL_KMEANS:
+    else:
         loss = np.zeros(np.shape(data)[1] - 2)
         for x in range(2, np.shape(data)[1]):
-            loss[x - 2] = perform_ideal_kmeans_1D(data[:, x], df.columns[x], IDEAL_K_1D[x - 2])
+            loss[x - 2] = perform_ideal_kmeans_1D(data[:, x], df.columns[x], IDEAL_K_1D[x - 2], visualize_ideal_k)
         print('Average Loss For Scaled Data: ' + str(np.mean(loss)))
 
 def visualize_kmeans(data, name):
@@ -49,15 +45,12 @@ def visualize_kmeans(data, name):
     plt.title(name)
     plt.show()
 
-def perform_ideal_kmeans_1D(data, name, ideal_k):
+def perform_ideal_kmeans_1D(data, name, ideal_k, visualize_ideal_k):
     kmeans = KMeans(n_clusters=ideal_k, random_state=0).fit(data[:, None])
     clusters = kmeans.labels_
-    if VISUALIZE_IDEAL_K:
+    if visualize_ideal_k:
         plt.scatter(data.ravel(), np.zeros_like(data).ravel(), c=clusters, cmap='rainbow')
         plt.title('Visualization of K = ' + str(ideal_k), fontsize=15)
         plt.xlabel(name)
         plt.show()
     return kmeans.inertia_
-
-if __name__ == '__main__':
-    main()
